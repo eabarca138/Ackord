@@ -1,5 +1,10 @@
 # ackord
 
+https://ackord-a9594.web.app/
+
+user: eabarca@gmail.com
+pass: 123456
+
 ## Project setup
 ```
 npm install
