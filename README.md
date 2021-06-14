@@ -2,7 +2,7 @@
 
 https://ackord-a9594.web.app/
 
-user: eabarca@gmail.com
+user: eabarca171@gmail.com
 pass: 123456
 
 ## Project setup

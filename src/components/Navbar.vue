@@ -10,7 +10,7 @@
           <b-nav-item
             ><router-link to="/registro">Registro</router-link></b-nav-item
           >
-          <b-nav-item @click="logout">Log out</b-nav-item>
+          <b-nav-item @click="logout">Salir</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-container>

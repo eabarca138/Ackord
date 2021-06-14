@@ -17,7 +17,7 @@
         placeholder="Password"
       ></b-form-input>
 
-      <b-button @click="login()" variant="primary">Log In</b-button>
+      <b-button @click="login()" variant="primary">Ingresar</b-button>
     </b-card>
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
       },
 
       set(value) {
-        this.$store.commit("updateEmail", value);
+        this.$store.commit("actualizarEmail", value);
       },
     },
     password: {
@@ -42,7 +42,7 @@ export default {
       },
 
       set(value) {
-        this.$store.commit("updatePassword", value);
+        this.$store.commit("actualizarPassword", value);
       },
     },
   },
