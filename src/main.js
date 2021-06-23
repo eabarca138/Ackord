@@ -8,6 +8,9 @@ import Firebase from "firebase"
 import FirebaseConfig from "../Firebase"
 Firebase.initializeApp(FirebaseConfig);
 
+const auth = Firebase.auth()
+auth.setPersistence(Firebase.auth.Auth.Persistence.LOCAL)
+
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
@@ -21,8 +24,15 @@ Vue.use(IconsPlugin)
 
 Vue.config.productionTip = false;
 
-new Vue({
-  router,
-  store,
-  render: (h) => h(App),
-}).$mount("#app");
+
+let app
+
+auth.onAuthStateChanged(() => {
+  if (!app) {
+    app = new Vue({
+      router,
+      store,
+      render: h => h(App)
+    }).$mount('#app')
+  }
+})

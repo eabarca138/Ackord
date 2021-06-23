@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import auth from "./modules/auth"
+import createPersistedState from 'vuex-persistedstate';
 import router from '@/router'
 import firebase from "firebase"
 import axios from "axios";
@@ -9,11 +11,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    //Auth
-
-    email: "",
-    password: "",
-
     //Data gral
 
     notas: [
@@ -30,9 +27,11 @@ export default new Vuex.Store({
       { nota: "A#", alteracion: true },
       { nota: "B", alteracion: false },
     ],
+
     nombreAcorde: "",
     notasAcorde: [],
     progresion: [],
+    env: [],
 
     //URL VARS
 
@@ -53,14 +52,15 @@ export default new Vuex.Store({
     progresiones: [],
   },
 
-  mutations: {
-    actualizarEmail(state, email) {
-      state.email = email;
-    },
-    actualizarPassword(state, password) {
-      state.password = password;
-    },
+  //Persistencia datos auth
 
+  plugins: [
+    createPersistedState({
+      paths: ["auth"],
+    }),
+  ],
+
+  mutations: {
     actualizarFundamental(state, fundamental) {
       state.fundamental = fundamental;
     },
@@ -88,7 +88,11 @@ export default new Vuex.Store({
     },
 
     agregarAcorde(state) {
-      let acorde = { notas: state.notasAcorde, nombre: state.nombreAcorde };
+      let acorde = {
+        notas: state.notasAcorde,
+        nombre: state.nombreAcorde,
+        env: state.env,
+      };
 
       state.progresion.push(acorde);
       console.log(state.progresion);
@@ -100,19 +104,17 @@ export default new Vuex.Store({
       state.progresion = [];
     },
 
-    guardarP(state) {
-      const progresion = state.progresion;
-      if (!progresion) return;
+    guardarP(state, payload) {
+      state.progresiones.push(payload);
 
-      let nombres = state.progresion.map((x) => {
-        return x.nombre;
-      });
-      const obj = Object.assign({}, nombres);
-      state.progresiones.push(obj);
-      console.log(obj);
       console.log(state.progresiones);
       state.progresion = [];
+    },
 
+    getP(state, payload) {
+      const progresion = payload;
+      if (!progresion) return;
+      state.progresiones.push(progresion);
     },
 
     reproducirProgresion(state) {
@@ -136,12 +138,21 @@ export default new Vuex.Store({
         synth.triggerAttackRelease(x.notas, "4n", (now += 1));
       });
     },
+
+    borrarProgresion(state, payload) {
+      const progresion = payload;
+      if (!progresion) return;
+      const index = state.progresiones.indexOf(progresion);
+      const index2 = state.progresiones.indexOf(index);
+      console.log(index2);
+      state.progresiones.splice(index, 1);
+    },
   },
   actions: {
     login({ state }) {
       firebase
         .auth()
-        .signInWithEmailAndPassword(state.email, state.password)
+        .signInWithEmailAndPassword(state.auth.email, state.auth.password)
         .then((userCredential) => {
           console.log(userCredential);
           router.push("home");
@@ -196,23 +207,93 @@ export default new Vuex.Store({
       });
 
       synth.triggerAttackRelease(state.notasAcorde, "4n");
-      console.log(synth.get());
+      state.env = synth.get().envelope;
+      console.log(state.env);
     },
 
-    async guardarProgresion({ commit /* state */ }) {
-      //const progresion = state.progresion;
+    //Carga DB
 
-      // Agregar Firebase
-      /*       try {
-        let db = firebase.firestore();
-        await db.collection("progresiones").add(progresion);
+    async getProgresiones({ commit, state }) {
+      const db = firebase.firestore();
+      let req;
+      try {
+        if (state.auth.email == "eabarca171@gmail.com") {
+          req = await db.collection("progresiones").get();
+        } else if (state.auth.email == "gonzafg2@gmail.com") {
+          req = await db.collection("progresiones2").get();
+        }
+
+        state.progresiones = [];
+        req.docs.forEach((progresion) => {
+          const obj = progresion.data();
+          const id = progresion.id;
+          obj.id = id;
+          commit("getP", obj);
+        });
       } catch (error) {
         console.log(error);
-      } */
+      }
+    },
+
+    async guardarProgresion({ commit, state }) {
+      const progresion = state.progresion;
+      if (!progresion) return;
+
+      let arrAcordes = state.progresion.map((x) => {
+        return x.nombre.replace(/,/g, "");
+      });
+
+      const obj = {};
+      state.progresion.forEach((progresion, i) => {
+        obj[i] = progresion.notas;
+      });
+      obj.acordes = arrAcordes.toString();
+
+      state.progresion.forEach((x) => {
+        obj.attack = x.env.attack;
+        obj.decay = x.env.decay;
+        obj.sustain = x.env.sustain;
+        obj.release = x.env.release;
+      });
+
+      // Guardar en Firebase
+      try {
+        let db = firebase.firestore();
+        if (state.auth.email == "eabarca171@gmail.com") {
+          await db.collection("progresiones").add(obj);
+        } else if (state.auth.email == "gonzafg2@gmail.com") {
+          await db.collection("progresiones2").add(obj);
+        }
+      } catch (error) {
+        console.log(error);
+      }
 
       //Agregar a Vuex
-      commit("guardarP");
+      commit("guardarP", obj);
+    },
+
+    async borrarProgresion({ commit, state }, payload) {
+      const progresion = payload;
+      if (!progresion) return;
+      const idFirebase = progresion.id;
+
+      // Eliminar desde Firebase
+      try {
+        const db = firebase.firestore();
+        if (state.auth.email == "eabarca171@gmail.com") {
+          await db.collection("progresiones").doc(idFirebase).delete();
+        } else if (state.auth.email == "gonzafg2@gmail.com") {
+          await db.collection("progresiones2").doc(idFirebase).delete();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      // Eliminar desde Vuex
+      commit("borrarProgresion", progresion);
     },
   },
-  modules: {},
+  modules: {
+    auth,
+  },
 });

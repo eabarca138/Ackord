@@ -177,8 +177,6 @@
 </template>
 
 <script>
-/* import axios from "axios"; */
-/* import * as Tone from "tone"; */
 import Navbar from "@/components/Navbar.vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 

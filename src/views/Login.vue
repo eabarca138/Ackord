@@ -5,7 +5,7 @@
         v-model="email"
         class="mb-2"
         type="email"
-        placeholder="Enter email"
+        placeholder="Correo electrónico"
         required
       ></b-form-input>
 
@@ -14,7 +14,7 @@
         class="mb-2"
         type="password"
         aria-describedby="password-help-block"
-        placeholder="Password"
+        placeholder="Contraseña"
       ></b-form-input>
 
       <b-button @click="login()" variant="primary">Ingresar</b-button>

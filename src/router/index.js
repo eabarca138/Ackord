@@ -54,8 +54,9 @@ router.beforeEach((to, from, next) => {
   } else if (user && !authRequired) {
     next("home");
   } else {
-    next();
+    next(); 
   }
 });
+
 
 export default router;

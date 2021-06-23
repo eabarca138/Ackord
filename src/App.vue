@@ -7,12 +7,19 @@
 
 <script>
 import Footer from "@/components/Footer.vue";
+import { mapActions } from "vuex";
+
 export default{
     components: {
     Footer,
   },
+        methods: {
+    ...mapActions(["getProgresiones"]),
+  },
+  created() {
+    this.getProgresiones();
+  },
 }
-
 </script>
 
 
