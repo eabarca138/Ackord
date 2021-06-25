@@ -15,16 +15,16 @@ export default new Vuex.Store({
 
     notas: [
       { nota: "C", alteracion: false },
-      { nota: "C#", alteracion: true },
+      { nota: "Db", alteracion: true },
       { nota: "D", alteracion: false },
-      { nota: "D#", alteracion: true },
+      { nota: "Eb", alteracion: true },
       { nota: "E", alteracion: false },
       { nota: "F", alteracion: false },
-      { nota: "F#", alteracion: true },
+      { nota: "Gb", alteracion: true },
       { nota: "G", alteracion: false },
-      { nota: "G#", alteracion: true },
+      { nota: "Ab", alteracion: true },
       { nota: "A", alteracion: false },
-      { nota: "A#", alteracion: true },
+      { nota: "Bb", alteracion: true },
       { nota: "B", alteracion: false },
     ],
 
@@ -172,11 +172,28 @@ export default new Vuex.Store({
         const notas = req.data[0].tones;
         const nombre = req.data[0].chordName;
 
-        //Agrego octava
+        //Agrego octavas
         const arr = notas.split(",");
         for (var i = 0; i < arr.length; i++) {
           arr[i] = arr[i] + oct;
         }
+
+        // 3era en octava contigua
+        if (arr[0] == "Ab3" || arr[0] == "A3" || arr[0] == "Bb3" || arr[0] == "B3") {
+          arr[1] = arr[1].replace(/3/, '4')
+        }
+        if (arr[0] == "Ab4" || arr[0] == "A4" || arr[0] == "Bb4" || arr[0] == "B4") {
+          arr[1] = arr[1].replace(/4/, '5')
+        }
+
+        // 5ta en octava contigua
+        if (arr[0] == "F3" || arr[0] == "Gb3" || arr[0] == "G3" || arr[0] == "Ab3" || arr[0] == "A3" || arr[0] == "Bb3" || arr[0] == "B3") {
+          arr[2] = arr[2].replace(/3/, '4')
+        }
+        if (arr[0] == "F4" || arr[0] == "Gb4" || arr[0] == "G4" || arr[0] == "Ab4" || arr[0] == "A4" || arr[0] == "Bb4" || arr[0] == "B4") {
+          arr[2] = arr[2].replace(/4/, '5')
+        }
+
         console.log(arr);
         console.log(nombre);
         state.notasAcorde = arr;

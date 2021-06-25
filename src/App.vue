@@ -35,10 +35,12 @@ export default{
 }
 body{
   background-repeat: no-repeat; 
-  background-image: linear-gradient($color1, $color2);
+  background-image: linear-gradient($color2, $color1);
 }
-html{
 
-  height: 100%;
+html,body,#app{
+ width: 100%;
+ height: 100%;
+ overflow-x: hidden;
 }
 </style>

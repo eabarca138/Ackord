@@ -7,9 +7,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav style="margin-left: auto">
-          <b-nav-item
-            ><router-link to="/registro">Registro</router-link></b-nav-item
-          >
+          <b-nav-item><router-link class="text-white text-decoration-none" to="/registro">Registro</router-link></b-nav-item>
           <b-nav-item @click="logout">Salir</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
@@ -44,7 +42,11 @@ ul {
 li {
   display: inline-block;
 }
+router-link{
+  color: aliceblue;
+}
 .navbar {
   background: $color1;
 }
+
 </style>

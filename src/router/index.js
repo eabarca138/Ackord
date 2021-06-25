@@ -1,7 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import Registro from "../views/Registro.vue";
 import Login from "../views/Login.vue";
 
 import Firebase from "firebase"
@@ -25,7 +23,7 @@ const routes = [
   {
     path: "/home",
     name: "Home",
-    component: Home,
+    component: () => import("../views/Home.vue"),
     meta: {
       login: true,
     },
@@ -33,7 +31,7 @@ const routes = [
     {
       path: "/registro",
       name: "Registro",
-      component: Registro,
+      component: () => import("../views/Registro.vue"),
       meta: {
         login: true,
       },

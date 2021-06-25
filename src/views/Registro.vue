@@ -2,26 +2,46 @@
   <div>
     <Navbar />
 
-    <b-container class="tabla">
-      <b-table striped hover :items="progresiones" :fields="fields">
+      <b-container class="d-flex justify-content-end btn-volver">
+        <b-button to="/home" size="md" class="my-1 rounded" variant="dark">
+          <b-icon icon="arrow-return-left" class="mx-1"></b-icon
+          >Volver</b-button
+        >
+      </b-container>
+    
+    <b-container class="tabla border-dark shadow">
+      <b-table
+        class="text-light mt-2"
+        hover
+        responsive
+        :items="progresiones"
+        :fields="fields"
+      >
+        <template #cell(index)="index">
+          {{ index.index + 1 }}
+        </template>
 
-             <template #cell(index)="data">
-        {{ data.index + 1 }}
-      </template>
-
-        <template #cell(actions)="row">
+        <template #cell(acciones)="row">
           <b-button
+            v-b-tooltip.hover
+            title="Reproducir"
             size="sm"
             @click="repTabla(row.item)"
-            class="my-1 me-4"
-            variant="primary"
+            class="my-1 d-inline-block btn-rep"
+            variant="success"
           >
             <b-icon icon="play-fill"></b-icon
           ></b-button>
 
-          <b-button size="sm" @click="borrar(row.item)" variant="danger"
-            >X</b-button
-          >
+          <b-button
+            class="d-inline-block"
+            size="sm"
+            @click="borrar(row.item)"
+            variant="danger"
+            v-b-tooltip.hover
+            title="Eliminar"
+            ><b-icon icon="x-circle"></b-icon
+          ></b-button>
         </template>
       </b-table>
     </b-container>
@@ -46,7 +66,7 @@ export default {
         "decay",
         "sustain",
         "release",
-        "actions",
+        "acciones",
       ],
     };
   },
@@ -97,7 +117,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/_variables.scss";
+
 .tabla {
-  margin-top: 7rem;
+  background: $color2;
+}
+
+.btn-volver{
+    padding-top: 6rem;
+}
+
+@media only screen and (min-width: 568px) {
+  .btn-rep {
+    margin-right: .7rem;
+  }
 }
 </style>
