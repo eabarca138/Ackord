@@ -13,30 +13,51 @@ export default new Vuex.Store({
   state: {
     //Data gral
 
-    notas: [
-      { nota: "C", alteracion: false },
-      { nota: "Db", alteracion: true },
-      { nota: "D", alteracion: false },
-      { nota: "Eb", alteracion: true },
-      { nota: "E", alteracion: false },
-      { nota: "F", alteracion: false },
-      { nota: "Gb", alteracion: true },
-      { nota: "G", alteracion: false },
-      { nota: "Ab", alteracion: true },
-      { nota: "A", alteracion: false },
-      { nota: "Bb", alteracion: true },
-      { nota: "B", alteracion: false },
+    notasOct3: [
+      { nota: "C", notaOct: "C3", alteracion: false, notaActiva: false },
+      { nota: "Db", notaOct: "Db3 C#3", alteracion: true, notaActiva: false },
+      { nota: "D", notaOct: "D3", alteracion: false, notaActiva: false },
+      { nota: "Eb", notaOct: "Eb3 D#3", alteracion: true, notaActiva: false },
+      { nota: "E", notaOct: "E3", alteracion: false, notaActiva: false },
+      { nota: "F", notaOct: "F3", alteracion: false, notaActiva: false },
+      { nota: "Gb", notaOct: "Gb3 F#3", alteracion: true, notaActiva: false },
+      { nota: "G", notaOct: "G3", alteracion: false, notaActiva: false },
+      { nota: "Ab", notaOct: "Ab3 G#3", alteracion: true, notaActiva: false },
+      { nota: "A", notaOct: "A3", alteracion: false, notaActiva: false },
+      { nota: "Bb", notaOct: "Bb3 A#3", alteracion: true, notaActiva: false },
+      { nota: "B", notaOct: "B3", alteracion: false, notaActiva: false },
+    ],
+
+    notasOct4: [
+      { nota: "C", notaOct: "C4", alteracion: false, notaActiva: false },
+      { nota: "Db", notaOct: "Db4 C#4", alteracion: true, notaActiva: false },
+      { nota: "D", notaOct: "D4", alteracion: false, notaActiva: false },
+      { nota: "Eb", notaOct: "Eb4 D#4", alteracion: true, notaActiva: false },
+      { nota: "E", notaOct: "E4", alteracion: false, notaActiva: false },
+      { nota: "F", notaOct: "F4", alteracion: false, notaActiva: false },
+      { nota: "Gb", notaOct: "Gb4 F#4", alteracion: true, notaActiva: false },
+      { nota: "G", notaOct: "G4", alteracion: false, notaActiva: false },
+      { nota: "Ab", notaOct: "Ab4 G#4", alteracion: true, notaActiva: false },
+      { nota: "A", notaOct: "A4", alteracion: false, notaActiva: false },
+      { nota: "Bb", notaOct: "Bb4 A#4", alteracion: true, notaActiva: false },
+      { nota: "B", notaOct: "B4", alteracion: false, notaActiva: false },
     ],
 
     nombreAcorde: "",
     notasAcorde: [],
     progresion: [],
-    env: [],
+
+    env: {
+    attack: 1,
+    decay: 1,
+    release: 1.5,
+    sustain: 0.5
+  },
 
     //URL VARS
 
     fundamental: "C",
-    tipo: "",
+    triada: "",
     septima: "",
     novena: "",
 
@@ -48,8 +69,8 @@ export default new Vuex.Store({
     release: 1.5,
 
     //CRUD
-
     progresiones: [],
+
   },
 
   //Persistencia datos auth
@@ -61,11 +82,12 @@ export default new Vuex.Store({
   ],
 
   mutations: {
+
     actualizarFundamental(state, fundamental) {
       state.fundamental = fundamental;
     },
-    actualizarTipo(state, tipo) {
-      state.tipo = tipo;
+    actualizarTipo(state, triada) {
+      state.triada = triada;
     },
     actualizarSeptima(state, septima) {
       state.septima = septima;
@@ -87,6 +109,24 @@ export default new Vuex.Store({
       state.release = release;
     },
 
+    asignarFundamental(state, payload) {
+      state.fundamental = payload;
+    },
+
+    asignarEnv(state, env) {
+      state.env = env
+    },
+
+    AgregarNotasAcorde(state, payload) {
+      if (!payload) return;
+      state.notasAcorde = payload;
+    },
+
+    AgregarNombreAcorde(state, payload) {
+      if (!payload) return;
+      state.nombreAcorde = payload;
+    },
+
     agregarAcorde(state) {
       let acorde = {
         notas: state.notasAcorde,
@@ -95,20 +135,37 @@ export default new Vuex.Store({
       };
 
       state.progresion.push(acorde);
-      console.log(state.progresion);
     },
+
+    activarNotas(state) {
+      state.notasOct3.forEach((el) => {
+        const interseccion = state.notasAcorde.filter((element) =>
+          el.notaOct.includes(element)
+        );
+        el.notaActiva = !interseccion.length ? false : true;
+        el.notaRend = !interseccion.length ? "" : interseccion[0].slice(0, -1);
+      });
+
+      state.notasOct4.forEach((el) => {
+        const interseccion = state.notasAcorde.filter((element) =>
+          el.notaOct.includes(element)
+        );
+        el.notaActiva = !interseccion.length ? false : true;
+        el.notaRend = !interseccion.length ? "" : interseccion[0].slice(0, -1);
+      });
+    },
+
     borrarAcorde(state, i) {
       state.progresion.splice(i, 1);
     },
+
     limpiarProgresion(state) {
       state.progresion = [];
     },
 
     guardarP(state, payload) {
-      state.progresiones.push(payload);
-
-      console.log(state.progresiones);
       state.progresion = [];
+      state.progresiones.push(payload);
     },
 
     getP(state, payload) {
@@ -149,63 +206,148 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    login({ state }) {
+    login({ state, commit }) {
       firebase
         .auth()
         .signInWithEmailAndPassword(state.auth.email, state.auth.password)
         .then((userCredential) => {
           console.log(userCredential);
           router.push("home");
+          commit("logoutGoogleauth")
         })
         .catch((error) => {
           alert(error.message);
         });
     },
 
+    googleLogin({commit}) {
+      let provider = new firebase.auth.GoogleAuthProvider();
+
+      try {
+        firebase
+          .auth()
+          .signInWithPopup(provider)
+          .then((result) => {
+            commit("loginGoogleauth")
+            console.log(result);
+            router.push("home");
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     //Petición API
-    async getData({ state }, oct = 3) {
-      const url = `https://api.uberchord.com/v1/chords/${state.fundamental}_${state.tipo}${state.septima}${state.novena}`;
+    async getData({ state, commit }, oct = 3) {
+      const url = `https://api.uberchord.com/v1/chords/${state.fundamental}_${state.triada}${state.septima}${state.novena}`;
 
       try {
         const req = await axios(url);
-        console.log(req);
         const notas = req.data[0].tones;
-        const nombre = req.data[0].chordName;
+        const nombreAcorde = req.data[0].chordName;
 
-        //Agrego octavas
+        //Agrego octava fundamental
         const arr = notas.split(",");
         for (var i = 0; i < arr.length; i++) {
           arr[i] = arr[i] + oct;
         }
 
         // 3era en octava contigua
-        if (arr[0] == "Ab3" || arr[0] == "A3" || arr[0] == "Bb3" || arr[0] == "B3") {
-          arr[1] = arr[1].replace(/3/, '4')
+        if (
+          arr[0] == "Ab3" ||
+          arr[0] == "A3" ||
+          arr[0] == "Bb3" ||
+          arr[0] == "B3"
+        ) {
+          arr[1] = arr[1].replace(/3/, "4");
         }
-        if (arr[0] == "Ab4" || arr[0] == "A4" || arr[0] == "Bb4" || arr[0] == "B4") {
-          arr[1] = arr[1].replace(/4/, '5')
+        if (
+          arr[0] == "Ab4" ||
+          arr[0] == "A4" ||
+          arr[0] == "Bb4" ||
+          arr[0] == "B4"
+        ) {
+          arr[1] = arr[1].replace(/4/, "5");
         }
 
         // 5ta en octava contigua
-        if (arr[0] == "F3" || arr[0] == "Gb3" || arr[0] == "G3" || arr[0] == "Ab3" || arr[0] == "A3" || arr[0] == "Bb3" || arr[0] == "B3") {
-          arr[2] = arr[2].replace(/3/, '4')
+        if (
+          arr[0] == "F3" ||
+          arr[0] == "F#3" ||
+          arr[0] == "Gb3" ||
+          arr[0] == "G3" ||
+          arr[0] == "G#3" ||
+          arr[0] == "Ab3" ||
+          arr[0] == "A3" ||
+          arr[0] == "Bb3" ||
+          arr[0] == "B3"
+        ) {
+          arr[2] = arr[2].replace(/3/, "4");
         }
-        if (arr[0] == "F4" || arr[0] == "Gb4" || arr[0] == "G4" || arr[0] == "Ab4" || arr[0] == "A4" || arr[0] == "Bb4" || arr[0] == "B4") {
-          arr[2] = arr[2].replace(/4/, '5')
+        if (
+          arr[0] == "F4" ||
+          arr[0] == "F#4" ||
+          arr[0] == "Gb4" ||
+          arr[0] == "G4" ||
+          arr[0] == "G#4" ||
+          arr[0] == "Ab4" ||
+          arr[0] == "A4" ||
+          arr[0] == "Bb4" ||
+          arr[0] == "B4"
+        ) {
+          arr[2] = arr[2].replace(/4/, "5");
         }
 
-        console.log(arr);
-        console.log(nombre);
-        state.notasAcorde = arr;
-        state.nombreAcorde = nombre;
+        //7ma en octava contigua
+        if (
+          arr[3] &&
+          (arr[0] == "D3" ||
+            arr[0] == "Eb3" ||
+            arr[0] == "E3" ||
+            arr[0] == "F3" ||
+            arr[0] == "F#3" ||
+            arr[0] == "G3" ||
+            arr[0] == "G#3" ||
+            arr[0] == "Ab3" ||
+            arr[0] == "A3" ||
+            arr[0] == "Bb3" ||
+            arr[0] == "B3")
+        ) {
+          arr[3] = arr[3].replace(/3/, "4");
+        }
+
+        if (
+          arr[3] &&
+          (arr[0] == "D4" ||
+            arr[0] == "Eb4" ||
+            arr[0] == "E4" ||
+            arr[0] == "F4" ||
+            arr[0] == "F#4" ||
+            arr[0] == "G4" ||
+            arr[0] == "G#4" ||
+            arr[0] == "Ab4" ||
+            arr[0] == "A4" ||
+            arr[0] == "Bb4" ||
+            arr[0] == "B4")
+        ) {
+          arr[3] = arr[3].replace(/4/, "5");
+        }
+
+        //9na en octava contigua}
+
+
+        commit("AgregarNotasAcorde", arr);
+        commit("AgregarNombreAcorde", nombreAcorde);
+        commit("activarNotas");
       } catch (error) {
         console.log(error);
       }
     },
 
-    async tocarAcorde({ state, dispatch }, payload) {
-      state.fundamental = payload.nota;
-      console.log(state.fundamental);
+    async tocarAcorde({ state, commit, dispatch }, payload) {
+      let fundamental = payload.nota;
+      commit("asignarFundamental", fundamental);
+
       await dispatch("getData", payload.oct);
 
       let synth = new Tone.PolySynth().toDestination();
@@ -224,8 +366,8 @@ export default new Vuex.Store({
       });
 
       synth.triggerAttackRelease(state.notasAcorde, "4n");
-      state.env = synth.get().envelope;
-      console.log(state.env);
+      let env = synth.get().envelope;
+      commit("asignarEnv", env)
     },
 
     //Carga DB
@@ -234,19 +376,29 @@ export default new Vuex.Store({
       const db = firebase.firestore();
       let req;
       try {
-        if (state.auth.email == "eabarca171@gmail.com") {
-          req = await db.collection("progresiones").get();
-        } else if (state.auth.email == "gonzafg2@gmail.com") {
-          req = await db.collection("progresiones2").get();
-        }
+        if (state.auth.googleAuth == true) {
+          state.progresiones = [];
 
-        state.progresiones = [];
-        req.docs.forEach((progresion) => {
-          const obj = progresion.data();
-          const id = progresion.id;
-          obj.id = id;
-          commit("getP", obj);
-        });
+        } else if (state.auth.email == "usuario1@ackord.com") {
+          req = await db.collection("usuario1").get();
+          state.progresiones = [];
+          req.docs.forEach((progresion) => {
+            const obj = progresion.data();
+            const id = progresion.id;
+            obj.id = id;
+            commit("getP", obj);
+          });
+
+        } else if (state.auth.email == "gonzafg2@gmail.com") {
+          req = await db.collection("usuario2").get();
+          state.progresiones = [];
+          req.docs.forEach((progresion) => {
+            const obj = progresion.data();
+            const id = progresion.id;
+            obj.id = id;
+            commit("getP", obj);
+          });
+        }
       } catch (error) {
         console.log(error);
       }
@@ -276,17 +428,22 @@ export default new Vuex.Store({
       // Guardar en Firebase
       try {
         let db = firebase.firestore();
-        if (state.auth.email == "eabarca171@gmail.com") {
-          await db.collection("progresiones").add(obj);
+        if (state.auth.googleAuth == true) {
+          commit("guardarP", obj);
+
+        } else if (state.auth.email == "usuario1@ackord.com") {
+          await db.collection("usuario1").add(obj);
+          //Agregar a Vuex
+          commit("guardarP", obj);
+
         } else if (state.auth.email == "gonzafg2@gmail.com") {
-          await db.collection("progresiones2").add(obj);
+          await db.collection("usuario2").add(obj);
+          //Agregar a Vuex
+          commit("guardarP", obj);
         }
       } catch (error) {
         console.log(error);
       }
-
-      //Agregar a Vuex
-      commit("guardarP", obj);
     },
 
     async borrarProgresion({ commit, state }, payload) {
@@ -297,17 +454,21 @@ export default new Vuex.Store({
       // Eliminar desde Firebase
       try {
         const db = firebase.firestore();
-        if (state.auth.email == "eabarca171@gmail.com") {
-          await db.collection("progresiones").doc(idFirebase).delete();
+        if (state.auth.googleAuth == true) {
+          // Eliminar desde Vuex
+          commit("borrarProgresion", progresion);
+        } else if (state.auth.email == "usuario1@ackord.com") {
+          await db.collection("usuario1").doc(idFirebase).delete();
+          // Eliminar desde Vuex
+          commit("borrarProgresion", progresion);
         } else if (state.auth.email == "gonzafg2@gmail.com") {
-          await db.collection("progresiones2").doc(idFirebase).delete();
+          await db.collection("usuario2").doc(idFirebase).delete();
+          // Eliminar desde Vuex
+          commit("borrarProgresion", progresion);
         }
       } catch (error) {
         console.log(error);
       }
-
-      // Eliminar desde Vuex
-      commit("borrarProgresion", progresion);
     },
   },
   modules: {

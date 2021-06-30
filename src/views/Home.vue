@@ -2,22 +2,23 @@
   <div>
     <Navbar />
 
+<!-- VISOR ACORDES -->
     <section class="cont-visor">
       <b-container class="visor-acordes border border-light">
         <div class="d-flex justify-content-between px-5 contenedor-iconos">
-
-        <div v-b-tooltip.hover title="Reproducir">
-          <b-icon
-            @click="reproducir"
-            icon="play-circle"
-            class="h3 icono-acordes"
-            variant="light"
-          ></b-icon>
+          <div v-b-tooltip.hover title="Reproducir">
+            <b-icon
+              @click="reproducir"
+              icon="play-circle"
+              class="h3 icono-acordes"
+              variant="light"
+            ></b-icon>
           </div>
 
           <div class="d-flex flex-row-reverse">
             <svg
-            v-b-tooltip.hover title="Guardar"
+              v-b-tooltip.hover
+              title="Guardar"
               @click="guardarProg"
               class="guardar icono-acordes"
               viewBox="0 0 448 512"
@@ -29,24 +30,28 @@
             </svg>
 
             <div v-b-tooltip.hover title="Borrar progresión">
-            <b-icon
-              icon="trash"
-              class="h3 icono-acordes"
-              variant="light"
-              @click="limpiarProgresion"
-            ></b-icon>
+              <b-icon
+                icon="trash"
+                class="h3 icono-acordes"
+                variant="light"
+                @click="limpiarProgresion"
+              ></b-icon>
             </div>
           </div>
         </div>
 
-        <ul class="m-0">
+        <ul class="m-0" v-if="progresion && progresion.length > 0">
           <li
             class="item-acorde rounded-circle"
             v-for="(acorde, i) in progresion"
             :key="i"
           >
-            {{ acorde.nombre | filtrarComas}}
-            <span class="rounded-circle boton-eliminar" @click="borrar(i)" v-b-tooltip.hover title="Borrar acorde"
+            {{ acorde.nombre | filtrarComas }}
+            <span
+              class="rounded-circle boton-eliminar"
+              @click="borrar(i)"
+              v-b-tooltip.hover
+              title="Borrar acorde"
               >x</span
             >
           </li>
@@ -57,30 +62,38 @@
     <section>
       <b-container>
         <b-row>
+          <!-- OCTAVA 3 -->
           <b-col lg="6" md="12" class="px-0">
-            <div class="d-flex pt-5 px-0">
+            <div class="d-flex pt-5 px-0" v-if="notasOct3 && notasOct3.length > 0">
               <div
-                v-bind:class="[nota.alteracion ? alteracion : natural]"
+                v-for="(nota, i) in notasOct3"
                 class="border border-dark"
-                v-for="(nota, i) in notas"
+                v-bind:class="[
+                  { active: nota.notaActiva },
+                  nota.alteracion ? alteracion : natural,
+                ]"
                 :key="i"
                 @click="tocar({ oct: 3, nota: nota.nota })"
               >
-                {{ nota.nota }}
+                <span class="mt-4 d-block">{{ nota.notaRend }}</span>
               </div>
             </div>
           </b-col>
 
+          <!-- OCTAVA 4 -->
           <b-col lg="6" md="12" class="px-0">
-            <div class="d-flex pt-5 px-0">
+            <div class="d-flex pt-5 px-0" v-if="notasOct4 && notasOct4.length > 0">
               <div
-                v-bind:class="[nota.alteracion ? alteracion : natural]"
+                v-for="nota in notasOct4"
+                v-bind:class="[
+                  { active: nota.notaActiva },
+                  nota.alteracion ? alteracion : natural,
+                ]"
                 class="border border-dark"
-                v-for="nota in notas"
                 :key="nota.nota"
                 @click="tocar({ oct: 4, nota: nota.nota })"
               >
-                {{ nota.nota }}
+                <span class="mt-4 d-block">{{ nota.notaRend }}</span>
               </div>
             </div>
           </b-col>
@@ -88,10 +101,10 @@
       </b-container>
     </section>
 
+  <!-- CONTROLES ENV -->
     <section>
-      <b-container class="mt-3 ">
+      <b-container class="mt-3">
         <b-row class="d-flex justify-content-around">
-          
           <b-col lg="3" md="6" sm="12">
             <label
               >A<input
@@ -103,7 +116,7 @@
                 value="1.0"
             /></label>
           </b-col>
-          
+
           <b-col lg="3" md="6" sm="12">
             <label
               >D<input
@@ -126,8 +139,8 @@
                 step="0.05"
                 value="0.5"
             /></label>
-            </b-col>
-          
+          </b-col>
+
           <b-col lg="3" md="6" sm="12">
             <label
               >R<input
@@ -139,71 +152,66 @@
                 value="1.5"
             /></label>
           </b-col>
-          
-          </b-row>
+        </b-row>
       </b-container>
     </section>
 
     <section>
       <b-container>
-
         <b-row class="mt-3">
           <b-col lg="3" md="6">
-        <label class="mx-3"
-          >Fundamental:<select v-model="fundamental">
-            <option>C</option>
-            <option>Db</option>
-            <option>D</option>
-            <option>Eb</option>
-            <option>E</option>
-            <option>F</option>
-            <option>Gb</option>
-            <option>G</option>
-            <option>Ab</option>
-            <option>A</option>
-            <option>Bb</option>
-            <option>B</option>
-          </select></label
-        >
-        </b-col>
+            <output class="border border-secondary out">{{
+              nombreAcorde | filtrarComas
+            }}</output>
+          </b-col>
 
-      <b-col lg="3" md="6">
-        <label class="mx-3"
-          >Tipo:<select v-model="tipo">
-            <option value="">mayor</option>
-            <option value="m">menor</option>
-            <option value="aug">aumentado</option>
-            <option value="dim">disminuido</option>
-            <option>sus2</option>
-            <option>sus4</option>
-          </select></label
-        >
-        </b-col>
+        <!-- TIPO DE ACORDE -->
+          <b-col lg="3" md="6">
+            <select class="mx-3" v-model="triada">
+              <option disabled >Triadas</option>
+              <option value="">Mayor</option>
+              <option value="m">Menor</option>
+              <option value="aug">Aumentado</option>
+              <option value="dim">Disminuido</option>
+            </select>
+          </b-col>
 
-      <b-col lg="3" md="6">
-        <label class="mx-3">Séptima:
-          <select v-model="septima">
-          <option value="7">7</option>
-          <option value=""></option>
-        </select></label
-        >
-        </b-col>
+          <b-col lg="3" md="6">
+            <div>
+              <p class="d-inline-block text-light">7ª</p>
+              <label class="mx-3 switch">
+                <input
+                  type="checkbox"
+                  v-model="septima"
+                  true-value="7"
+                  false-value=""
+                />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </b-col>
 
-      <b-col lg="3" md="6">
-        <label class="mx-3"
-          >Novena:<select v-model="novena">
-            <option value="9">9</option>
-            <option value=""></option></select
-        ></label>
-        </b-col>
-
-  </b-row>
+          <b-col lg="3" md="6">
+            <div>
+              <p class="d-inline-block text-light">9ª</p>
+              <label class="mx-3 switch"
+                ><input
+                  type="checkbox"
+                  v-model="novena"
+                  true-value="9"
+                  false-value="" />
+                <span class="slider round"></span
+              ></label>
+            </div>
+          </b-col>
+        </b-row>
       </b-container>
     </section>
 
-    <section class="mt-2 pb-5 mb-5">
-      <b-container class="d-flex justify-content-center ">
-                <button class="btn btn-success mx-2 py-auto" @click="agregarAcorde">
+  <!-- AGREGAR ACORDE -->
+    <section class="agregar">
+      <b-container class="d-flex justify-content-center">
+        <button class="btn btn-success mx-2 py-auto" @click="agregarAcorde">
           Agregar acorde
         </button>
       </b-container>
@@ -227,7 +235,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(["notas", "acorde", "progresion"]),
+    ...mapState([
+      "notasOct3",
+      "notasOct4",
+      "acorde",
+      "progresion",
+      "nombreAcorde",
+    ]),
 
     fundamental: {
       get() {
@@ -238,9 +252,9 @@ export default {
         this.$store.commit("actualizarFundamental", value);
       },
     },
-    tipo: {
+    triada: {
       get() {
-        return this.$store.state.tipo;
+        return this.$store.state.triada;
       },
 
       set(value) {
@@ -310,7 +324,7 @@ export default {
       "limpiarProgresion",
       "reproducirProgresion",
     ]),
-    ...mapActions(["getData", "tocarAcorde", "guardarProgresion"]),
+    ...mapActions(["getData", "getProgresiones", "tocarAcorde", "guardarProgresion"]),
 
     tocar(oct, el) {
       this.tocarAcorde(oct, el);
@@ -331,31 +345,115 @@ export default {
   },
   created() {
     this.getData();
+    this.getProgresiones()
   },
 
   filters: {
-  filtrarComas: function (value) {
-    return value.replace(/,/g, "");
-  }
-}
+    filtrarComas: function (value) {
+      return value.replace(/,/g, "");
+    },
+  },
 };
 </script>
 
 <style lang="scss">
 @import "@/assets/_variables.scss";
+
+//VISOR
+      .visor-acordes {
+        background: $color1;
+        border: #fff;
+        box-shadow: 2px 2px 4px #000000;
+        position: relative;
+        padding: 3rem;
+        min-height: 10rem;
+      }
+      
+      .cont-visor {
+        padding-top: 7rem;
+      }
+      
+      .item-acorde {
+        color: #fff;
+        font-weight: bold;
+        width: 4.6rem;
+        padding: 1.5625rem;
+        border-radius: 50%;
+        border: white;
+        background-image: linear-gradient($color2, $color1);
+        display: inline-block;
+        margin: 1rem;
+        position: relative;
+        box-shadow: 2px 2px 4px #000000;
+        &:hover {
+          background-color: rgb(252, 236, 236);
+        }
+      }
+      
+      .boton-eliminar {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30%;
+        background-color: rgb(255, 0, 0);
+        color: #fff;
+        &:hover {
+          cursor: pointer;
+          background: rgb(87, 12, 12);
+        }
+      }
+      
+      .contenedor-iconos {
+        position: absolute;
+        left: .5rem;
+        top: 0.7rem;
+        width: 100%;
+      }
+      .icono-acordes {
+        cursor: pointer;
+        &:hover {
+          fill: rgb(138, 133, 133);
+        }
+      }
+      .guardar {
+        margin-left: 1.25rem;
+        height: 51%;
+        width: 14%;
+      }
+
+//TECLAS
+
 .natural {
   background-color: #fff;
   height: 6rem;
   width: 50%;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(255, 255, 0, 0.6);
+    color: #fff;
+  }
 }
-.natural:hover {
-  background-color: black;
-  color: #fff;
-}
+
 .alteracion {
   width: 25%;
-  background-image: radial-gradient(#5d5d5d, black);
+  //background-image: radial-gradient(#5d5d5d, black);
+  background-color: #000;
   color: #fff;
+  cursor: pointer;
+}
+
+.active {
+  font-weight: bold;
+  background-color: rgba(255, 255, 0, 0.6);
+}
+
+//OPCIONES
+
+.out {
+  color: #fff;
+  background-color: $color1;
+  height: 1.3rem;
+  width: 9rem;
 }
 
 label {
@@ -364,7 +462,7 @@ label {
 select {
   color: #fff;
   background-color: $color1;
-  width: 6.5rem;
+  width: 9rem;
 }
 option {
   padding: 1.25rem;
@@ -373,62 +471,75 @@ option {
   border: 1px solid transparent;
 }
 
-.visor-acordes {
-  background: $color1;
-  border: #fff;
-  box-shadow: 2px 2px 4px #000000;
+.switch {
   position: relative;
-  padding: 3rem;
-  min-height: 10rem;
-}
-
-.cont-visor{
-    padding-top: 7rem;
-}
-
-.item-acorde {
-  color: #fff;
-  width: 4.6rem;
-  padding: 1.5625rem;
-  border-radius: 50%;
-  border: white;
-    background-image: linear-gradient($color2, $color1);
   display: inline-block;
-  margin: 1rem;
-  position: relative;
-  box-shadow: 2px 2px 4px #000000;
-  &:hover {
-    background-color: rgb(252, 236, 236);
+  width: 2.8125rem;
+  height: 1.25rem;
+  margin-top: .6rem;
+}
+
+@media only screen and (min-width: 992px) {
+  .switch {
+    margin-top: 0;
   }
 }
 
-.boton-eliminar {
+.slider {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 30%;
-  background-color: rgb(255, 0, 0);
-  color: #fff;
-  &:hover {
-    cursor: pointer;
-    background: rgb(87, 12, 12);
-  }
-}
-
-.contenedor-iconos {
-  position: absolute;
-  top: 0.7rem;
-  width: 97%;
-}
-.icono-acordes {
   cursor: pointer;
-  &:hover {
-    fill: rgb(138, 133, 133);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 11px;
+  width: 12px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 2.125rem;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.agregar{
+  margin-bottom: 3rem;
+  padding-bottom: 3rem;
+}
+
+@media only screen and (min-width: 992px) {
+  .agregar{
+    margin-top: 2.3rem;
   }
 }
-.guardar {
-  margin-left: 1.25rem;
-  height: 51%;
-  width: 14%;
-}
+
 </style>

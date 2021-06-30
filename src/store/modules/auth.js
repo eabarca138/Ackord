@@ -1,7 +1,8 @@
 export default {
     state: {
         email: "",
-        password: ""
+        password: "",
+        googleAuth: false,
     },
     mutations: {
         actualizarEmail(state, email) {
@@ -9,6 +10,12 @@ export default {
         },
         actualizarPassword(state, password) {
           state.password = password;
+        },
+        loginGoogleauth(state) {
+          state.googleAuth = true
+        },
+        logoutGoogleauth(state) {
+          state.googleAuth = false
         },
 }
 }

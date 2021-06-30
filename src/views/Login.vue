@@ -1,6 +1,8 @@
 <template>
   <div class="home">
     <b-card style="max-width: 20rem" class="mx-auto mt-5">
+    <h1>ACKORD</h1>
+    <hr class="my-3">
       <b-form-input
         v-model="email"
         class="mb-2"
@@ -17,7 +19,9 @@
         placeholder="Contraseña"
       ></b-form-input>
 
-      <b-button @click="login()" variant="primary">Ingresar</b-button>
+      <b-button @click="login()" variant="primary" class="mt-2">Inicias sesión</b-button>
+
+      <p class="mt-3 text-primary" @click="googleLogin"><u>Iniciar sesión con Google</u></p>
     </b-card>
   </div>
 </template>
@@ -47,9 +51,16 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["login"]),
+    ...mapActions(["login", "googleLogin"]),
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+u{
+  cursor: pointer;
+}
+h1 {
+  font-family: 'Saira Stencil One', cursive;
+}
+</style>
