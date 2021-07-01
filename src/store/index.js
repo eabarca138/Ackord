@@ -48,11 +48,11 @@ export default new Vuex.Store({
     progresion: [],
 
     env: {
-    attack: 1,
-    decay: 1,
-    release: 1.5,
-    sustain: 0.5
-  },
+      attack: 1,
+      decay: 1,
+      release: 1.5,
+      sustain: 0.5,
+    },
 
     //URL VARS
 
@@ -70,11 +70,9 @@ export default new Vuex.Store({
 
     //CRUD
     progresiones: [],
-
   },
 
   //Persistencia datos auth
-
   plugins: [
     createPersistedState({
       paths: ["auth"],
@@ -82,7 +80,6 @@ export default new Vuex.Store({
   ],
 
   mutations: {
-
     actualizarFundamental(state, fundamental) {
       state.fundamental = fundamental;
     },
@@ -114,7 +111,7 @@ export default new Vuex.Store({
     },
 
     asignarEnv(state, env) {
-      state.env = env
+      state.env = env;
     },
 
     AgregarNotasAcorde(state, payload) {
@@ -182,7 +179,7 @@ export default new Vuex.Store({
         oscillator: {
           type: "square",
         },
-        volume: -13,
+        volume: -20,
         envelope: {
           attack: state.attack,
           decay: state.decay,
@@ -191,6 +188,7 @@ export default new Vuex.Store({
         },
       });
 
+      // 
       state.progresion.forEach((x) => {
         synth.triggerAttackRelease(x.notas, "4n", (now += 1));
       });
@@ -213,14 +211,14 @@ export default new Vuex.Store({
         .then((userCredential) => {
           console.log(userCredential);
           router.push("home");
-          commit("logoutGoogleauth")
+          commit("logoutGoogleauth");
         })
         .catch((error) => {
           alert(error.message);
         });
     },
 
-    googleLogin({commit}) {
+    googleLogin({ commit }) {
       let provider = new firebase.auth.GoogleAuthProvider();
 
       try {
@@ -228,7 +226,7 @@ export default new Vuex.Store({
           .auth()
           .signInWithPopup(provider)
           .then((result) => {
-            commit("loginGoogleauth")
+            commit("loginGoogleauth");
             console.log(result);
             router.push("home");
           });
@@ -246,7 +244,7 @@ export default new Vuex.Store({
         const notas = req.data[0].tones;
         const nombreAcorde = req.data[0].chordName;
 
-        //Agrego octava fundamental
+        //Agrego octava tónica
         const arr = notas.split(",");
         for (var i = 0; i < arr.length; i++) {
           arr[i] = arr[i] + oct;
@@ -272,7 +270,7 @@ export default new Vuex.Store({
 
         // 5ta en octava contigua
         if (
-          arr[0] == "F3" ||
+          arr[0] == "F3"  ||
           arr[0] == "F#3" ||
           arr[0] == "Gb3" ||
           arr[0] == "G3" ||
@@ -283,6 +281,9 @@ export default new Vuex.Store({
           arr[0] == "B3"
         ) {
           arr[2] = arr[2].replace(/3/, "4");
+        }
+        if (arr[0] == "F3" && arr[1] == "Ab3" && arr[2] == "B4") {
+          arr[2] = arr[2].replace(/4/, "3");
         }
         if (
           arr[0] == "F4" ||
@@ -296,6 +297,9 @@ export default new Vuex.Store({
           arr[0] == "B4"
         ) {
           arr[2] = arr[2].replace(/4/, "5");
+        }
+        if (arr[0] == "F4" && arr[1] == "Ab4" && arr[2] == "B5") {
+          arr[2] = arr[2].replace(/5/, "4");
         }
 
         //7ma en octava contigua
@@ -333,9 +337,15 @@ export default new Vuex.Store({
           arr[3] = arr[3].replace(/4/, "5");
         }
 
-        //9na en octava contigua}
+        //9na en octava contigua
+        if (arr[4] && arr[0].includes(3)){
+        arr[4] = arr[4].replace(/3/, "4");
+        }
+        if (arr[4] && arr[0].includes(4)){
+          arr[4] = arr[4].replace(/4/, "5");
+          }
 
-
+        //Asigno data a estados
         commit("AgregarNotasAcorde", arr);
         commit("AgregarNombreAcorde", nombreAcorde);
         commit("activarNotas");
@@ -355,7 +365,7 @@ export default new Vuex.Store({
       synth.set({
         oscillator: {
           type: "square",
-          volume: -13,
+          volume: -20,
         },
         envelope: {
           attack: state.attack,
@@ -367,7 +377,7 @@ export default new Vuex.Store({
 
       synth.triggerAttackRelease(state.notasAcorde, "4n");
       let env = synth.get().envelope;
-      commit("asignarEnv", env)
+      commit("asignarEnv", env);
     },
 
     //Carga DB
@@ -378,7 +388,6 @@ export default new Vuex.Store({
       try {
         if (state.auth.googleAuth == true) {
           state.progresiones = [];
-
         } else if (state.auth.email == "usuario1@ackord.com") {
           req = await db.collection("usuario1").get();
           state.progresiones = [];
@@ -388,7 +397,6 @@ export default new Vuex.Store({
             obj.id = id;
             commit("getP", obj);
           });
-
         } else if (state.auth.email == "gonzafg2@gmail.com") {
           req = await db.collection("usuario2").get();
           state.progresiones = [];
@@ -425,20 +433,19 @@ export default new Vuex.Store({
         obj.release = x.env.release;
       });
 
-      // Guardar en Firebase
       try {
         let db = firebase.firestore();
         if (state.auth.googleAuth == true) {
           commit("guardarP", obj);
-
         } else if (state.auth.email == "usuario1@ackord.com") {
+          // Guardar en Firebase
           await db.collection("usuario1").add(obj);
-          //Agregar a Vuex
+          //Guardar en Vuex
           commit("guardarP", obj);
-
         } else if (state.auth.email == "gonzafg2@gmail.com") {
+          // Guardar en Firebase
           await db.collection("usuario2").add(obj);
-          //Agregar a Vuex
+          //Guardar en Vuex
           commit("guardarP", obj);
         }
       } catch (error) {
@@ -451,17 +458,18 @@ export default new Vuex.Store({
       if (!progresion) return;
       const idFirebase = progresion.id;
 
-      // Eliminar desde Firebase
       try {
         const db = firebase.firestore();
         if (state.auth.googleAuth == true) {
           // Eliminar desde Vuex
           commit("borrarProgresion", progresion);
         } else if (state.auth.email == "usuario1@ackord.com") {
+          // Eliminar desde Firebase
           await db.collection("usuario1").doc(idFirebase).delete();
           // Eliminar desde Vuex
           commit("borrarProgresion", progresion);
         } else if (state.auth.email == "gonzafg2@gmail.com") {
+          // Eliminar desde Firebase
           await db.collection("usuario2").doc(idFirebase).delete();
           // Eliminar desde Vuex
           commit("borrarProgresion", progresion);

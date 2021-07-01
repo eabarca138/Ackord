@@ -19,7 +19,7 @@
         placeholder="Contraseña"
       ></b-form-input>
 
-      <b-button @click="login()" variant="primary" class="mt-2">Inicias sesión</b-button>
+      <b-button @click="login()" variant="primary" class="mt-2">Iniciar sesión</b-button>
 
       <p class="mt-3 text-primary" @click="googleLogin"><u>Iniciar sesión con Google</u></p>
     </b-card>

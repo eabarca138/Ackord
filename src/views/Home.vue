@@ -378,8 +378,7 @@ export default {
         font-weight: bold;
         width: 4.6rem;
         padding: 1.5625rem;
-        border-radius: 50%;
-        border: white;
+        left: 0;
         background-image: linear-gradient($color2, $color1);
         display: inline-block;
         margin: 1rem;

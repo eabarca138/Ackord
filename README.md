@@ -1,39 +1,92 @@
-# ackord
+# Ackord
+
+Ackord es una SPA desarrollada con el framework Vue.js, destinada a la creación de progresiones armónicas. Nos permite reproducir tanto acordes, como secuencias de ellos mediante el uso de la librería Tone.js. Las notas que componen cada acorde y el nombre que se le da a el mismo, son obtenidos de la API Uberchord y Las progresiones creadas son almacenadas en  Firestore, base de datos de Firebase, pudiendo gestionar nuestros datos 
+ desde la app web.
 
 https://ackord-a9594.web.app/
 
-user: eabarca171@gmail.com
-pass: 123456
+```
+Usuario para inicio de sesión
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+user: usuario1@ackord.com
+pass: 654321
 ```
 
-### Compiles and minifies for production
+<img src="public/mobile.png" alt="mobile"/>
+
+## Iniciar proyecto
+_Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas._
+
 ```
-npm run build
+$ git clone git@github.com:eabarca138/Ackord.git
+```
+```
+$ cd ./Ackord/
+```
+```
+$ npm install
+```
+```
+$ npm run serve
 ```
 
-### Run your unit tests
+## Herramientas de desarrollo
+
+### Lenguajes
+
 ```
-npm run test:unit
+- HTML5
+```
+```
+- CSS3
+```
+```
+- Javascript
 ```
 
-### Run your end-to-end tests
+### Pre-Procesador CSS
 ```
-npm run test:e2e
+- Sass
 ```
-
-### Lints and fixes files
+### Frameworks
 ```
-npm run lint
+- Vue.js
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+```
+- Bootstrap v4.6
+```
+```
+- BootstrapVue
+```
+### Librerías
+```
+- Vuex
+```
+```
+- Vue Router
+```
+```
+- Axios
+```
+```
+- Tone.js
+```
+```
+- vuex-persistedstate
+```
+### Base de datos
+```
+- Cloud Firestore
+```
+### Deploy y hosting.
+```
+- Firebase
+``` 
+### Línea de comandos
+```
+- Vue-CLI
+```
+### Gestor de paquetes
+```
+- NPM
+```

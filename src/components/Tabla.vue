@@ -95,7 +95,7 @@ export default {
         oscillator: {
           type: "square",
         },
-        volume: -13,
+        volume: -20,
         envelope: {
           attack: progresion.attack,
           decay: progresion.decay,
